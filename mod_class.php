@@ -668,7 +668,7 @@ class datalynx {
      */
     public function display() {
         if (!empty($this->_currentview)) {
-            //FIXME: add_to_log($this->course->id, 'datalynx', 'view', $this->pagefile. '.php?id='. $this->cm->id, $this->id(), $this->cm->id);
+            add_to_log($this->course->id, 'datalynx', 'view', $this->pagefile. '.php?id='. $this->cm->id, $this->id(), $this->cm->id);
             $this->_currentview->display();
         }
     }
@@ -934,7 +934,7 @@ class datalynx {
                         break;
                 }
 
-                //FIXME: add_to_log($this->course->id, 'datalynx', 'field '. $action, 'field/index.php?id='. $this->cm->id, $this->id(), $this->cm->id);
+                add_to_log($this->course->id, 'datalynx', 'field '. $action, 'field/index.php?id='. $this->cm->id, $this->id(), $this->cm->id);
                 if ($strnotify) {
                     $fieldsprocessed = $processedfids ? count($processedfids) : 'No';
                     $this->notifications['good'][] = get_string($strnotify, 'datalynx', $fieldsprocessed);
@@ -1354,7 +1354,7 @@ class datalynx {
                         break;
                 }
 
-                //FIXME: add_to_log($this->course->id, 'datalynx', 'view '. $action, 'view/index.php?id='. $this->cm->id, $this->id(), $this->cm->id);
+                add_to_log($this->course->id, 'datalynx', 'view '. $action, 'view/index.php?id='. $this->cm->id, $this->id(), $this->cm->id);
                 if ($strnotify) {
                     $viewsprocessed = $processedvids ? count($processedvids) : 'No';
                     $this->notifications['good'][] = get_string($strnotify, 'datalynx', $viewsprocessed);
@@ -1704,7 +1704,7 @@ class datalynx {
      * 
      */
     public function add_to_log($action) {
-        //FIXME: add_to_log($this->course->id, 'datalynx', 'entry '. $action, $this->pagefile. '.php?id='. $this->cm->id, $this->id(), $this->cm->id);
+        add_to_log($this->course->id, 'datalynx', 'entry '. $action, $this->pagefile. '.php?id='. $this->cm->id, $this->id(), $this->cm->id);
     }
     
     /**
