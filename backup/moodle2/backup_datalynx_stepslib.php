@@ -135,7 +135,8 @@ class backup_datalynx_activity_structure_step extends backup_activity_structure_
         // Define sources
         $datalynx->set_source_table('datalynx', array('id' => backup::VAR_ACTIVITYID));
         $module->set_source_table('course_modules', array('id' => backup::VAR_MODID));
-
+		
+        /**
         $field->set_source_sql(
                 "SELECT f.*,
                         CASE f.type WHEN 'datalynxview' THEN MAX(c.fullname) ELSE NULL END AS targetcourse,
@@ -150,14 +151,14 @@ class backup_datalynx_activity_structure_step extends backup_activity_structure_
               LEFT JOIN {datalynx_filters} fil ON " . $DB->sql_cast_char2int('f.param3') . " = fil.id
                   WHERE f.dataid = :dataid
                GROUP BY f.id", array('dataid' => backup::VAR_PARENTID));
-
-        /* // for PostreSQL
+		**/
+        
+        //PostgreSQL
         $field->set_source_sql(
             "SELECT f.*,
                FROM {datalynx_fields} f
               WHERE f.dataid = :dataid
                 AND f.type != 'datalynxview'", array('dataid' => backup::VAR_PARENTID));
-        */
 
         $filter->set_source_table('datalynx_filters', array('dataid' => backup::VAR_PARENTID));
         $view->set_source_table('datalynx_views', array('dataid' => backup::VAR_PARENTID));
