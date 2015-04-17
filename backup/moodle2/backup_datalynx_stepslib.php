@@ -155,7 +155,7 @@ class backup_datalynx_activity_structure_step extends backup_activity_structure_
         
         //PostgreSQL
         $field->set_source_sql(
-            "SELECT f.*,
+            "SELECT f.*
                FROM {datalynx_fields} f
               WHERE f.dataid = :dataid
                 AND f.type != 'datalynxview'", array('dataid' => backup::VAR_PARENTID));
