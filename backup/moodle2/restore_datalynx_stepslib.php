@@ -147,10 +147,10 @@ class restore_datalynx_activity_structure_step extends restore_activity_structur
             $data->param1 = $this->get_mappingid('datalynx', $data->param1);
             $data->param2 = $this->get_mappingid('datalynx_views', $data->param2);
 
-            $course = $data->targetcourse ? $data->targetcourse : 'NULL';
-            $instance = $data->targetinstance ? $data->targetinstance : 'NULL';
-            $view = $data->targetview ? $data->targetview : 'NULL';
-            $filter = $data->targetfilter ? $data->targetfilter : 'NULL';
+            $course = isset($data->targetcourse) ? $data->targetcourse : 'NULL';
+            $instance = isset($data->targetinstance) ? $data->targetinstance : 'NULL';
+            $view = isset($data->targetview) ? $data->targetview : 'NULL';
+            $filter = isset($data->targetfilter) ? $data->targetfilter : 'NULL';
 
             $this->log("WARNING! 'datalynxview' field type cannot be restored if referencing instances are not included in the backup!", backup::LOG_WARNING);
             $this->log("* Please verify the references of the field:", backup::LOG_WARNING);
@@ -452,7 +452,14 @@ class restore_datalynx_activity_structure_step extends restore_activity_structur
             if (json_last_error() == JSON_ERROR_NONE && is_array($users)) {
                 $newusers = array();
                 foreach($users as $user) {
-                    $newusers[] = $this->get_mappingid('user', $user);
+                    if ($user) {
+                        $newuser = $this->get_mappingid('user', $user);
+                        if ($newuser) {
+                            $newusers[] = $newuser;
+                        } else {
+                            $newusers[] = $user; // WARNING: hack for restoring into same instance w/o course data
+                        }
+                    }
                 }
                 $newcontent = json_encode($newusers);
                 $DB->set_field('datalynx_contents', 'content', $newcontent, array('id' => $id));
@@ -469,7 +476,9 @@ class restore_datalynx_activity_structure_step extends restore_activity_structur
         $results = $DB->get_records_sql_menu($sql, array('type' => 'teammemberselect', 'dataid' => $datalynxnewid));
         foreach ($results as $id => $referencefieldid) {
             $newreferencefieldid = $this->get_mappingid('datalynx_field', $referencefieldid);
-            $DB->set_field('datalynx_fields', 'param5', $newreferencefieldid, array('id' => $id));
+            if ($newreferencefieldid) {
+                $DB->set_field('datalynx_fields', 'param5', $newreferencefieldid, array('id' => $id));
+            }
         }
 
         // Update redirect on submit ids
@@ -479,7 +488,9 @@ class restore_datalynx_activity_structure_step extends restore_activity_structur
         $results = $DB->get_records_sql_menu($sql, array('dataid' => $datalynxnewid));
         foreach ($results as $id => $redirectid) {
             $newredirectid = $this->get_mappingid('datalynx_view', $redirectid);
-            $DB->set_field('datalynx_views', 'param10', $newredirectid, array('id' => $id));
+            if ($newredirectid) {
+                $DB->set_field('datalynx_views', 'param10', $newredirectid, array('id' => $id));
+            }
         }
 
         // Update id of userinfo fields if needed

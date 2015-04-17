@@ -87,7 +87,7 @@ class datalynxfield_textarea extends datalynxfield_base {
         }        
 
         // Editor content
-        if ($this->is_editor()) {
+        if (false) { // $this->is_editor()
             $data = (object) $values;
             $data->{'editor_editor'} = $data->editor;
 
@@ -103,7 +103,7 @@ class datalynxfield_textarea extends datalynxfield_base {
                 // Import: One value as array of text,format,trust, so take the text
                 $value = reset($value);
             }                
-            $rec->content = clean_param($value, PARAM_NOTAGS);
+            $rec->content = clean_param($value, PARAM_RAW);
         }            
         
         return $DB->update_record('datalynx_contents', $rec);

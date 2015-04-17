@@ -137,7 +137,11 @@ class backup_datalynx_activity_structure_step extends backup_activity_structure_
         $module->set_source_table('course_modules', array('id' => backup::VAR_MODID));
 
         $field->set_source_sql(
-                "SELECT f.*, c.fullname AS targetcourse, d.name AS targetinstance, v.name AS targetview, fil.name AS targetfilter
+                "SELECT f.*,
+                        CASE f.type WHEN 'datalynxview' THEN MAX(c.fullname) ELSE NULL END AS targetcourse,
+                        CASE f.type WHEN 'datalynxview' THEN MAX(d.name) ELSE NULL END AS targetinstance,
+                        CASE f.type WHEN 'datalynxview' THEN MAX(v.name) ELSE NULL END AS targetview,
+                        CASE f.type WHEN 'datalynxview' THEN MAX(fil.name) ELSE NULL END AS targetfilter
                    FROM {datalynx_fields} f
               LEFT JOIN {datalynx} d ON " . $DB->sql_cast_char2int('f.param1') . " = d.id
               LEFT JOIN {course_modules} cm ON cm.instance = d.id
@@ -145,7 +149,15 @@ class backup_datalynx_activity_structure_step extends backup_activity_structure_
               LEFT JOIN {datalynx_views} v ON " . $DB->sql_cast_char2int('f.param2') . " = v.id
               LEFT JOIN {datalynx_filters} fil ON " . $DB->sql_cast_char2int('f.param3') . " = fil.id
                   WHERE f.dataid = :dataid
-               GROUP BY f.id, targetcourse, targetinstance, targetview, targetfilter", array('dataid' => backup::VAR_PARENTID));
+               GROUP BY f.id", array('dataid' => backup::VAR_PARENTID));
+
+        /* // for PostreSQL
+        $field->set_source_sql(
+            "SELECT f.*,
+               FROM {datalynx_fields} f
+              WHERE f.dataid = :dataid
+                AND f.type != 'datalynxview'", array('dataid' => backup::VAR_PARENTID));
+        */
 
         $filter->set_source_table('datalynx_filters', array('dataid' => backup::VAR_PARENTID));
         $view->set_source_table('datalynx_views', array('dataid' => backup::VAR_PARENTID));
