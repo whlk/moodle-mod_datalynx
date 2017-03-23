@@ -45,7 +45,7 @@ class datalynxfield_number_renderer extends datalynxfield_text_renderer {
         if (isset($entry->{"c{$fieldid}_content"})) {
             $number = (float) $entry->{"c{$fieldid}_content"};
         } else {
-            return '';
+            return 0;
         }
         
         $decimals = (int) trim($field->get('param1'));
