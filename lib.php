@@ -1451,3 +1451,18 @@ function mod_datalynx_get_tagged_entries($tag, $exclusivemode = false, $fromctx 
                 $exclusivemode, $fromctx, $ctx, $rec, $page, $totalpages);
     }
 }
+
+/**
+ * This function, taps into course list. Right now, the default datalynx view is shown right in the course list.
+ * @param cm_info $cm
+ * @throws dml_exception
+ */
+function mod_datalynx_cm_info_view(cm_info $cm) {
+    global $CFG, $USER, $DB;
+
+    if ($viewid = $DB->get_field('datalynx', 'defaultview', array('id' => $cm->instance))) {
+        // $datalynx = new \mod_datalynx\datalynx($cm->instance, $cm->id);
+        $content = \mod_datalynx\datalynx::get_content_inline($cm->instance, $viewid);
+        $cm->set_content($content);
+    }
+}
